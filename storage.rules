@@ -1,0 +1,11 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /board-booster-2027/{subjectId}/{allPaths=**} {
+      allow read: if request.auth != null
+        && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid)/purchases/$(subjectId))
+        && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)/purchases/$(subjectId)).data.status == 'paid';
+      allow write: if false;
+    }
+  }
+}
